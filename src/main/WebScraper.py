@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+import requests
 import time
 
 def scraper():
@@ -18,17 +20,29 @@ def scraper():
     password_input.send_keys(Keys.RETURN)
     
     
-    #click the Jobs button on the side panel
+    #Go to the student postings
     driver.get('https://app.joinhandshake.com/stu/postings')
+    #Search for Data Analyst positions
+    driver.get('https://app.joinhandshake.com/stu/postings?page=1&per_page=25&sort_direction=desc&sort_column=default&query=Data%20Analyst')
     
-    time.sleep(5)
+    # Get the page source after dynamic content is loaded
+    time.sleep(5)  # Wait for dynamic content to load
+    page_source = driver.page_source
     
-    search_input = driver.find_element_by_xpath('//input[@value]')
+    # Parse the page source with BeautifulSoup
+    soup = BeautifulSoup(page_source, 'lxml')
     
-
+    titles = soup.find_all('div', class_ = 'style__job-title___+ohfl')
     
-    time.sleep(5)
-    driver.quit()
+    job_titles = []
+    
+    # Extract job titles from span elements within each div
+    for title in titles[:2]:
+        job_title = title.find_all('span')[1].get_text(strip=True)
+        job_titles.append(job_title)
+    
+    print(job_titles)
+        
 
 if __name__ == "__main__":
     scraper()
