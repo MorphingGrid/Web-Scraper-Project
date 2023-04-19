@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
-import requests
+import re
 import time
 
 def scraper():
@@ -23,7 +23,9 @@ def scraper():
     #Go to the student postings
     driver.get('https://app.joinhandshake.com/stu/postings')
     #Search for Data Analyst positions
-    driver.get('https://app.joinhandshake.com/stu/postings?page=1&per_page=25&sort_direction=desc&sort_column=default&query=Data%20Analyst')
+    handshake = 'https://app.joinhandshake.com/stu/postings?page=1&per_page=25&sort_direction=desc&sort_column=default&query=Data%20Analyst'
+    driver.get(handshake)
+    
     
     # Get the page source after dynamic content is loaded
     time.sleep(5)  # Wait for dynamic content to load
@@ -32,16 +34,51 @@ def scraper():
     # Parse the page source with BeautifulSoup
     soup = BeautifulSoup(page_source, 'lxml')
     
-    titles = soup.find_all('div', class_ = 'style__job-title___+ohfl')
+    #Finds the element that contains all the job postings
+    job_postings = soup.find_all('div', class_ = 'style__cards___1xGnw')
     
-    job_titles = []
+    job_list = []
     
-    # Extract job titles from span elements within each div
-    for title in titles[:2]:
-        job_title = title.find_all('span')[1].get_text(strip=True)
-        job_titles.append(job_title)
+    #For each job, append the reference link to the job into a list
+    for element in job_postings:
+        for link in element.find_all('a', href = True):
+            job_list.append('https://app.joinhandshake.com' + link['href'])
+            
+    total_word_count = [0,0,0,0,0]
+    words_to_count = ['sql', 'python', 'excel', 'tableau']
+            
+    for job in job_list:
+        #Visit each web page and wait 5 seconds for the page to load 
+        driver.get(job)
+        source = driver.page_source
+        soup = BeautifulSoup(source, 'lxml')
+        job_description = soup.find('div', class_ = 'style__text___2ilXR style__large___3qwwG style__tight___RF4uH').text
+        
+        #Converts the job description to lower for counting purposes
+        job_description_lower = job_description.lower()
+        
+        
+        for i, word in enumerate(words_to_count):
+            word_count = job_description_lower.count(word)
+            total_word_count[i] += word_count
+            #print(f"The word {word} appears {word_count} times.")
+        
+        #Because the programming langauge R is a standalone character r, we have to count it differently.
+        #We use the re package
+        standalone_r = len(re.findall(r'\br\b', job_description_lower))
+        total_word_count[4] += standalone_r
+        #print(f"The word 'r' appears {standalone_r} times.")
+        time.sleep(2)
+        
+    print("For Data Analyst:",end = '\n')
+    total_words = ['SQL', 'Python', 'Excel', 'Tableau', 'R']
     
-    print(job_titles)
+    for i, word in enumerate(total_words):
+        print(f"{word} appears {total_word_count[i]} times.")
+        
+
+    driver.quit()
+    
         
 
 if __name__ == "__main__":
