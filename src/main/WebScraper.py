@@ -12,21 +12,18 @@ def autobot():
     driver = webdriver.Remote(service.service_url)
 
     driver.implicitly_wait(10)
-    driver.get('https://www.linkedin.com/jobs/search?trk=guest_homepage-basic_guest_nav_menu_jobs&position=1&pageNum=0')
-    
-    #Searches for the role "Data Analyst" in Orlando, Florida using LinkedIn's built in search function
-    search_input = driver.find_element_by_id('job-search-bar-keywords')
-    
     
     search_terms = ['Data Analyst', 'Data Scientist', 'Data Engineer']
     
     for term in search_terms:
-        
+        driver.get('https://www.linkedin.com/jobs/search?trk=guest_homepage-basic_guest_nav_menu_jobs&position=1&pageNum=0')
+        search_input = driver.find_element_by_id('job-search-bar-keywords')    
         search_input.send_keys(term)
         location = driver.find_element_by_id('job-search-bar-location')
         location.clear()
         location.send_keys('Orlando,Florida')
         location.send_keys(Keys.RETURN)
+        
         time.sleep(3)
         scraper(driver, term)
         
@@ -62,7 +59,7 @@ def scraper(driver, search_term):
         
     
     #Final Output
-    print("For {search_term}s:",end = '\n')
+    print(f"For {search_term}s:",end = '\n')
         
     total_words = ['SQL', 'Python', 'Excel', 'Tableau', 'R']
         
