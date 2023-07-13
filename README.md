@@ -1,7 +1,17 @@
-# Web Scraper Project
- 
-Personal Project. I designed a Web Scraper using a combination of BeautifulSoup4 and Selenium to scrape popular job boards such as LinkedIn and Indeed.
+![banner](assets/banner.png)
 
-This was done using Anaconda instead of pip so the requirements.txt is very bloated. You need Selenium, BeautifulSoup, Re, and ChromeWebDriver for this. 
+# Author
+- [Vinh Van](https://github.com/MorphingGrid)
 
-There are two programs, one for LinkedIn and one for Handshake, requires the latest version of Google Chrome and the Chrome WebDriver
+
+#  Insights at a Glance:  
+Data Analysts and Data Engineering Roles stress more on data cleaning and database management skills such as Excel and SQL whereas Data Scientists require a much more Software oriented and well rounded background. Many Data Analyst Roles didn't even list a programming lanauge as required whereas Data Scientists often required knowing Python as a bare minimum.  
+## Most Popular Software Overall: **SQL**  
+## Most Popular Software by Role  
+### Data Analyst: **Excel**  
+### Data Engineers: **SQL**  
+### Data Scientists: **Python** 
+
+# Tableau Dashboard 
+
+![dashboard](assets/Dashboard)
