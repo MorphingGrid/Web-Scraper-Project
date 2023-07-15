@@ -35,7 +35,8 @@ This Automated Bot will scrape the top job postings of popular job sites such as
   - This project was done in Spyder using Anaconda which is why the requirements.txt is bloated. Can be done with a clean Python install using PIP instead of using Conda
 
 ## Methods
-  - Automated Web Navigation and HTML Interaction
+  - Automated Web Navigation
+  - Dynamic HTML Elements Interaction
   - Web Scraping
   - Dashboard Visualization
 
@@ -51,6 +52,20 @@ I highly recommend using Excel to record your data and create a simple table and
 Throughout this project, Handshake proved to be a tougher nut to crack than LinkedIn and Indeed for a multitude of reasons. The first was that Handshake requires a person have an account and login before they can look at available jobs.. I used my student account to login to Handshake and to automate this I would recommend using driver.get() to brute force and grab the webpages during the login process and minimizing how often you're searching for elemnets on the webpage to reduce loading times. You will have to input your actual username and password for Selenium to login so if you are not comfortable with putting that information publicly I would omit the Handshake code from your src file like I did or putting a placeholder text whereever a username or password is needed.
 
 ### Static vs Dynamic HTML Elements
-Another problem I ran into early with Handshake is how they handle their HTML elements. I have a very basic knowledge of web development but from how I understand it, websites handle their HTML in 2 ways: statically and dynamically. Older and simpler websites such as Indeed and LinkedIn employ static HTML, where information is pre-created and stored on a web server. When the user requests a page from a static website, the users browser retrieves the entire pre-built file with fixed content. Handshake uses a dynamically updated system. This is where websites dynamically update content on the fly either using some form of server-side technology like PHP, Python or React. This is so the webpage can change on-the-fly based on how the user interacts with it. Go on any webpage, right click the page and click 'Inspect Elements'. If every piece of text or element can be found in the elements tab, it is most likely a static website. If a lot of the information is omitted or you only see a skelaton with the most basic information, it is probably a dynamically updated website where a lot of the information is hidden behind an API or external source. This makes web scraping a bit more difficult since you can't just scrape the raw data on the page like you can with static pages. ///elaborate more
+Another problem I ran into early with Handshake is how they handle their HTML elements. I have a very basic knowledge of web development but from how I understand it, websites handle their HTML in 2 ways: statically and dynamically. Older and simpler websites such as Indeed and LinkedIn employ static HTML, where information is pre-created and stored on a web server. When the user requests a page from a static website, the user's browser retrieves the entire pre-built file with fixed content.  
 
-# IN PROGRESS: What can be approved section(pagination, reduce load times, add more software)
+Handshake uses a dynamically updated system. This is where websites dynamically update content on the fly either using some form of server-side technology like PHP, Python or React. This is so the webpage can change on-the-fly based on how the user interacts with it. Go on any webpage, right click the page and click 'Inspect Elements'. If every piece of text or element can be found in the elements tab, it is most likely a static website. If a lot of the information is omitted or you only see a skelaton with the most basic information, it is probably a dynamically updated website where a lot of the information is hidden behind an API or external source. This makes web scraping a bit more difficult since you can't just scrape the raw data on the page like you can with static pages.  
+
+The method I employed was a brute force approach to the problem. Handshake uses 'style cards', think of them as little rectangle boxes that contain each individual job posting(shown above). Instead of containing the HTML elements of each job postng in each card, it instead encapsulates the information and uses a reference link known as an **href** parameter, storing a link to a page with the actual job posting.
+
+  - First, I iterated through every style card and pulled the reference links and put them all in a list called job_links
+  - Second, I iterated through job_links, using ChromeWebDriver to load each link, giving 5 second for the webpage to load
+  - Third, I used BeautifulSoup4 to then parse and scrape the elements that were now available
+  - Lastly, I made sure to account for grammatical issues such as capitalization and standalone characters
+
+This isn't the only or best way to implement web scraping dynamically updated systems, only one possible solution.
+
+##  What Can Be Improved  
+
+  - **Pagination**: My project only scraped the first 20-25 jobs of each job board, the most relevant ones on the first page of each search result. Depending on the scope of a project you may want to look at the top 100 jobs for example, and that would require you to navigate to page 2,3,etc... of a job board. Implementing some form of pagination would be useful.  
+  - **Reduce Load Times**: Another thing is loading efficiency. Because of my brute force approach, it increased loading time. Scraping would often take around 3-5 minutes and that was just for the first page of results. This was a result of having to set a global implicit wait of 10 seconds and occasional use of time.sleep() of 5 seconds to ensure the information was properly loaded before it could be parsed. Optimizing the code to reduce the use of these methods would improve loading times tremendously.  
